@@ -1,11 +1,14 @@
 import nodemailer from 'nodemailer';
 
 export const emailConfig = {
+  host: process.env.EMAIL_SERVER_HOST,
+  port: process.env.EMAIL_SERVER_PORT,
+  secure: true,
   auth: {
     user: process.env.EMAIL_SERVER_USER,
     pass: process.env.EMAIL_SERVER_PASSWORD,
   },
-  service: process.env.EMAIL_SERVICE,
+  
 };
 
 const transporter = nodemailer.createTransport(emailConfig);
@@ -19,9 +22,7 @@ export const sendMail = async ({ from, html, subject, text, to }) => {
     html,
   };
 
-  process.env.NODE_ENV === 'production'
-    ? await transporter.sendMail(data)
-    : console.log(data);
+  await transporter.sendMail(data);
 };
 
 export default transporter;

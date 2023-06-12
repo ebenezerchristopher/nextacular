@@ -11,6 +11,7 @@ import {
 } from '@/config/email-templates/invitation';
 import { sendMail } from '@/lib/server/mail';
 import prisma from '@/prisma/index';
+import { uuid } from 'uuidv4';
 
 export const countWorkspaces = async (slug) =>
   await prisma.workspace.count({
@@ -235,10 +236,12 @@ export const inviteUsers = async (id, email, members, slug) => {
   const inviter = email;
 
   if (workspace) {
+    
     const membersList = members.map(({ email, role }) => ({
       email,
       inviter,
       teamRole: role,
+      raderCode: uuid(),
     }));
     const data = members.map(({ email }) => ({
       createdAt: null,
@@ -260,13 +263,15 @@ export const inviteUsers = async (id, email, members, slug) => {
         },
         where: { id: workspace.id },
       }),
-      sendMail({
-        html: inviteHtml({ code: workspace.inviteCode, name: workspace.name }),
-        subject: `[Nextacular] You have been invited to join ${workspace.name} workspace`,
-        text: inviteText({ code: workspace.inviteCode, name: workspace.name }),
-        to: members.map((member) => member.email),
-      }),
     ]);
+    membersList.forEach(member => 
+      sendMail({
+        html: inviteHtml({ code: workspace.inviteCode, name: workspace.name, raderCode: member.raderCode}),
+        subject: `[Nextacular] You have been invited to join ${workspace.name} workspace`,
+        text: inviteText({ code: workspace.inviteCode, name: workspace.name, raderCode: member.raderCode}),
+        to: members.map((member) => member.email),
+      })
+    );
     return membersList;
   } else {
     throw new Error('Unable to find workspace');
@@ -288,7 +293,7 @@ export const isWorkspaceOwner = (email, workspace) => {
   return isTeamOwner;
 };
 
-export const joinWorkspace = async (workspaceCode, email) => {
+export const joinWorkspace = async (workspaceCode, raderCode) => {
   const workspace = await prisma.workspace.findFirst({
     select: {
       creatorId: true,
@@ -301,15 +306,9 @@ export const joinWorkspace = async (workspaceCode, email) => {
   });
 
   if (workspace) {
-    await prisma.member.upsert({
-      create: {
-        workspaceId: workspace.id,
-        email,
-        inviter: workspace.creatorId,
-        status: InvitationStatus.ACCEPTED,
-      },
-      update: {},
-      where: { email },
+    await prisma.member.update({
+      data: {status: InvitationStatus.ACCEPTED},
+      where: { raderCode },
     });
     return new Date();
   } else {

@@ -1,5 +1,5 @@
-const html = ({ code, name }) => {
-  const link = `${process.env.APP_URL}/teams/invite?code=${encodeURI(code)}`;
+const html = ({ code, name, raderCode}) => {
+  const link = `${process.env.APP_URL}/teams/invite?code=${encodeURI(code)}&raderCode=${encodeURI(raderCode)}`;
 
   return `
 <body>
@@ -13,8 +13,8 @@ const html = ({ code, name }) => {
 `;
 };
 
-const text = ({ code, name }) => {
-  const link = `${process.env.APP_URL}/teams/invite?code=${encodeURI(code)}`;
+const text = ({ code, name, raderCode }) => {
+  const link = `${process.env.APP_URL}/teams/invite?code=${encodeURI(code)}&raderCode=${encodeURI(raderCode)}`;
 
   return `
 Hello there!

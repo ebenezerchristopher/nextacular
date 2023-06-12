@@ -93,7 +93,7 @@ const Team = ({ isTeamOwner, workspace }) => {
   const removeMember = (memberId) => {
     api(`/api/workspace/team/member`, {
       body: { memberId },
-      method: 'DELETE',
+      method: 'POST',
     }).then((response) => {
       if (response.errors) {
         Object.keys(response.errors).forEach((error) =>

@@ -68,6 +68,7 @@ model Member {
   workspaceId String
   email       String
   inviter     String
+  raderCode   String    @unique @default("")
   invitedAt   DateTime? @default(now())
   joinedAt    DateTime?
   deletedAt   DateTime?
@@ -77,9 +78,8 @@ model Member {
   teamRole  TeamRole         @default(MEMBER)
   member    User?            @relation(fields: [email], references: [email], name: "membership")
   invitedBy User?            @relation(fields: [inviter], references: [email], name: "inviter")
-  workspace Workspace        @relation(fields: [workspaceId], references: [id])
+  workspace Workspace        @relation(fields: [workspaceId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 
-  @@unique([workspaceId, email])
   @@map("members")
 }
 
@@ -137,7 +137,7 @@ model Workspace {
   deletedAt     DateTime?
   updatedAt     DateTime? @updatedAt
 
-  creator User     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creator User     @relation(fields: [creatorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   members Member[]
   domains Domain[]
 

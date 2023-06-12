@@ -9,7 +9,7 @@ import Button from '@/components/Button';
 import api from '@/lib/common/api';
 import { getInvitation } from '@/prisma/services/workspace';
 
-const Invite = ({ workspace }) => {
+const Invite = ({ workspace, raderCode }) => {
   const { data } = useSession();
   const router = useRouter();
   const [isSubmitting, setSubmittingState] = useState(false);
@@ -17,7 +17,7 @@ const Invite = ({ workspace }) => {
   const join = () => {
     setSubmittingState(true);
     api(`/api/workspace/team/join`, {
-      body: { workspaceCode: workspace.workspaceCode },
+      body: { workspaceCode: workspace.workspaceCode, raderCode },
       method: 'POST',
     }).then((response) => {
       setSubmittingState(false);
@@ -74,9 +74,9 @@ const Invite = ({ workspace }) => {
 };
 
 export const getServerSideProps = async (context) => {
-  const { code } = context.query;
+  const { code, raderCode } = context.query;
   const workspace = await getInvitation(code);
-  return { props: { workspace } };
+  return { props: { workspace, raderCode } };
 };
 
 export default Invite;

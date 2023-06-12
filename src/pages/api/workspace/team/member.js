@@ -4,7 +4,7 @@ import { remove } from '@/prisma/services/membership';
 const handler = async (req, res) => {
   const { method } = req;
 
-  if (method === 'DELETE') {
+  if (method === 'POST') {
     await validateSession(req, res);
     const { memberId } = req.body;
     await remove(memberId);

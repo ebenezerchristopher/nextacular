@@ -64,8 +64,7 @@ export const getPendingInvitations = async (email) =>
   });
 
 export const remove = async (id) =>
-  await prisma.member.update({
-    data: { deletedAt: new Date() },
+  await prisma.member.delete({
     where: { id },
   });
 
