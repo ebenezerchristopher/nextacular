@@ -24,6 +24,8 @@ const Meta = ({ author, description, keywords, noIndex, title }) => {
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={`${url}/images/seo-cover.png`} />
+      <meta property="og:image:width" content="500" />
+      <meta property="og:image:height" content="500" />
 
       <meta property="twitter:card" content="summary_large_image" />
       <meta property="twitter:url" content={url} />
